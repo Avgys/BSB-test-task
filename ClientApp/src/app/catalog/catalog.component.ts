@@ -6,6 +6,7 @@ import { Category } from '../models/Category';
 import { CategoryService } from '../services/category.service';
 import { Observable, pipe, Subject } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
+import { AccountService } from '../services/account.service';
 
 @Component({
   selector: 'app-catalog',
@@ -13,8 +14,9 @@ import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
   styleUrls: ['./catalog.component.css']
 })
 export class CatalogComponent implements OnInit {
-  @ViewChild('readOnlyTemplate', {static: false}) readOnlyTemplate: TemplateRef<any>|undefined;
-  @ViewChild('editTemplate', {static: false}) editTemplate: TemplateRef<any>|undefined;
+  @ViewChild('readOnlyTemplate', {static: false}) readOnlyTemplate: TemplateRef<any> | undefined;
+  @ViewChild('editTemplate', {static: false}) editTemplate: TemplateRef<any> | undefined;
+  @ViewChild('simpleTemplate', {static: false}) simpleTemplate: TemplateRef<any> | undefined;
   
   toppings = new FormControl();
   products: Product[] = [];
@@ -31,7 +33,8 @@ export class CatalogComponent implements OnInit {
 
   constructor(
     private productService: ProductService,
-    private categoryService: CategoryService
+    private categoryService: CategoryService,
+    private accountService: AccountService
     ) { 
     //this.ngOnInit();
   }
@@ -39,16 +42,7 @@ export class CatalogComponent implements OnInit {
   ngOnInit() {
     this.getProducts();    
     this.getCategories();
-    // this.searchTerms.subscribe(
-    //   // wait 300ms after each keystroke before considering the term
-    //   //debounceTime(300),
-    //   // ignore new term if same as previous term
-    //   //distinctUntilChanged(),
-      
-    //   // switch to new search observable each time the term changes
-    //   pipe((term: string) => this.products$ = this.productService.searchProducts(term)
-    //   ),
-    // ); 
+    this.accountService.getAccountInfo();
   }
 
   search(term: string): void {
@@ -77,6 +71,10 @@ export class CatalogComponent implements OnInit {
       console.log('filter off');
       this.filteredProducts = this.products;
     }
+  }
+
+  isLogged(){
+    return this.accountService.isLogged;
   }
 
   getCategories(){
@@ -123,11 +121,19 @@ export class CatalogComponent implements OnInit {
   }
 
   loadTemplate(product: Product) {
-      if (this.editedProduct && this.editedProduct.id === product.id) {
+    if (!this.isLogged()){
+      return this.simpleTemplate;  
+    }
+    else
+    {
+      if (this.isLogged() && (this.accountService.user.roleName == "user" || this.accountService.user.roleName == "admin")){
+        if (this.editedProduct && this.editedProduct.id === product.id) {
           return this.editTemplate;
-      } else {
+        } else {
           return this.readOnlyTemplate;
-      }
+        }    
+      }  
+    }           
   }
   
   saveProduct() {
@@ -167,10 +173,10 @@ export class CatalogComponent implements OnInit {
   }
   
   deleteProduct(Product: Product) {
-      // this.productService.deleteProduct(Product.id).subscribe(data => {
-      //     this.statusMessage = 'Данные успешно удалены',
-      //     this.getProducts();
-      // });
+      this.productService.deleteProduct(Product.id).subscribe(data => {
+          this.statusMessage = 'Product is deleted',
+          this.getProducts();
+      });
   }
 }
 

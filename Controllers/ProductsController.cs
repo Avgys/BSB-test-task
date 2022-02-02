@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Catalog.Data;
 using Catalog.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Catalog.DTO;
+using System.Security.Claims;
 
 namespace BSB_test_task.Controllers
 {
@@ -30,6 +33,7 @@ namespace BSB_test_task.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts([FromQuery] string name)
         {
+            
             IEnumerable<Product> products;
             if (name == null)
             {
@@ -39,7 +43,14 @@ namespace BSB_test_task.Controllers
             {
                 products = await _productRepo.GetAllAsync(name);
             }
-            return Ok(_mapper.Map<IEnumerable<ProductDTO>>(products));
+            if (User.IsInRole("admin") || User.IsInRole("user"))
+            {
+                return Ok(_mapper.Map<IEnumerable<ProductAuthDTO>>(products));
+            }
+            else
+            {
+                return Ok(_mapper.Map<IEnumerable<ProductDTO>>(products));
+            }
         }
 
         // GET: api/Products/5
@@ -56,39 +67,33 @@ namespace BSB_test_task.Controllers
             return Ok(_mapper.Map<ProductDTO>(product));
         }
 
-        //// PUT: api/Products/5
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutProduct(int id, Product product)
-        //{
-        //    if (id != product.Id)
-        //    {
-        //        return BadRequest();
-        //    }
+        // PUT: api/Products/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 
-        //    _context.Entry(product).State = EntityState.Modified;
+        [Authorize]
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutProduct(int id, ProductDTO productDTO)
+        {
+            if (id != productDTO.Id)
+            {
+                return BadRequest();
+            }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!ProductExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
-
-        //    return NoContent();
-        //}
+            var product = _mapper.Map<Product>(productDTO);
+            var updatedProduct = await _productRepo.UpdateAsync(product);
+            if (updatedProduct != null)
+            {
+                return NoContent();
+            }
+            else
+            {
+                return NotFound();
+            }
+        }
 
         //POST: api/Products
         //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<ProductDTO>> PostProduct(ProductDTO productDto)
         {
@@ -101,6 +106,7 @@ namespace BSB_test_task.Controllers
                     Name = productDto.CategoryName
                 };
                 await _categoryRepo.AddAsync(category);
+                await _categoryRepo.SaveChangesAsync();
             }
 
             newProduct.CategoryId = category.Id;
@@ -111,20 +117,28 @@ namespace BSB_test_task.Controllers
             return CreatedAtAction("GetProduct", new { id = productDTO.Id }, productDTO);
         }
 
-        //// DELETE: api/Products/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteProduct(int id)
-        //{
-        //    var product = await _context.Products.FindAsync(id);
-        //    if (product == null)
-        //    {
-        //        return NotFound();
-        //    }
+        // DELETE: api/Products/5
 
-        //    _context.Products.Remove(product);
-        //    await _context.SaveChangesAsync();
+        [Authorize]
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _productRepo.GetByIdAsync(id);
+            if (product == null)
+            {
+                return NotFound();
+            }
 
-        //    return NoContent();
-        //}
+            if (_productRepo.Delete(product))
+            {
+                await _productRepo.SaveChangesAsync();
+
+                return NoContent();
+            }
+            else
+            {
+                return StatusCode(500);
+            }
+        }
     }
 }

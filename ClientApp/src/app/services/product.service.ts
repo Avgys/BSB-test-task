@@ -11,7 +11,7 @@ export class ProductService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  productApi : string = 'https://localhost:5001/api/products';
+  productApi : string = 'https://185.152.139.93:443/api/products';
 
   constructor(
     private http: HttpClient,
@@ -26,6 +26,11 @@ export class ProductService {
     console.log(term);
     let url = `${this.productApi}/?name=${term}`;   
     return this.http.get<Product[]>(url, this.httpOptions);
+  }
+
+  deleteProduct(id: number) {
+    let url = `${this.productApi}/${id}`;
+    return this.http.delete<Product>(url, this.httpOptions);
   }
 
   getProduct(id: number) {   

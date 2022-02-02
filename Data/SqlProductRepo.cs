@@ -58,9 +58,27 @@ namespace Catalog.Data
             return products;
         }
 
-        public Task<Product> UpdateAsync(Product product)
+        public async Task<Product> UpdateAsync(Product product)
         {
-            throw new System.NotImplementedException();
+            _catalogContext.Entry(product).State = EntityState.Modified;
+
+            try
+            {
+                await _catalogContext.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!(await _catalogContext.Products.AnyAsync(ent => ent.Id == product.Id)))
+                {
+                    return null;
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return await _catalogContext.Products.FirstOrDefaultAsync(e => e.Id == product.Id);
         }
 
         public Task<int> SaveChangesAsync()

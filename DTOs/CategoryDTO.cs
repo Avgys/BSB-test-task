@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace Catalog.Models
+namespace Catalog.DTO
 {
     public class CategoryDTO
     {

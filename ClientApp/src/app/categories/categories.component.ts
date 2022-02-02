@@ -1,5 +1,6 @@
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Category } from '../models/Category';
+import { AccountService } from '../services/account.service';
 import { CategoryService } from '../services/category.service';
 
 @Component({
@@ -11,14 +12,18 @@ export class CategoriesComponent implements OnInit {
 
   @ViewChild('readOnlyTemplate', {static: false}) readOnlyTemplate: TemplateRef<any>|undefined;
   @ViewChild('editTemplate', {static: false}) editTemplate: TemplateRef<any>|undefined;
-
+  @ViewChild('simpleTemplate', {static: false}) simpleTemplate: TemplateRef<any> | undefined;
+  
   categories: Category[];
   editedCategory: Category;
   isLoaded: boolean = false;
   statusMessage: string = "";
   isNewRecord: boolean = false;
 
-  constructor(private categoryService: CategoryService) { 
+  constructor(
+    private categoryService: CategoryService,    
+    private accountService: AccountService
+    ) { 
     this.ngOnInit();
   }
 
@@ -38,6 +43,10 @@ export class CategoriesComponent implements OnInit {
       );
   }
 
+  isLogged(){
+    return this.accountService.isLogged;
+  }
+
   addCategory() {
     this.editedCategory = {id: 0, name: ""};
     this.categories.push(this.editedCategory);
@@ -49,11 +58,23 @@ export class CategoriesComponent implements OnInit {
   }
   
   loadTemplate(category: Category) {
-      if (this.editedCategory && this.editedCategory.id === category.id) {
+    if (!this.isLogged()){
+      return this.simpleTemplate;  
+    }
+    else
+    {
+      if (this.isLogged() && (this.accountService.user.roleName == "admin")){        
+        if (this.editedCategory && this.editedCategory.id === category.id) {
           return this.editTemplate;
-      } else {
+        } 
+        else {
           return this.readOnlyTemplate;
-      }
+        }    
+      } 
+      else{
+        return this.simpleTemplate; 
+      } 
+    }  
   }
   // сохраняем пользователя
   saveCategory() {

@@ -1,5 +1,5 @@
 
-namespace Catalog.Models
+namespace Catalog.DTO
 {
     public class ProductDTO {
         public int Id { get; set; }
@@ -8,6 +8,5 @@ namespace Catalog.Models
         public string Description { get; set; }        
         public int Price { get; set; }
         public string Specification { get; set; }
-        public string SpecialSpec { get; set; }
     }
 }

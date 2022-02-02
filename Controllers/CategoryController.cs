@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Catalog.Data;
 using Catalog.Models;
 using AutoMapper;
+using Catalog.DTO;
 
 namespace BSB_test_task.Controllers
 {
@@ -108,8 +109,6 @@ namespace BSB_test_task.Controllers
             {
                 return StatusCode(500);
             }
-        }
-
-        
+        }        
     }
 }

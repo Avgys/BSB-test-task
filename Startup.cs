@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using AutoMapper;
 using Catalog.Models;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace BSB_test_task
 {
@@ -29,7 +30,15 @@ namespace BSB_test_task
             services.AddControllersWithViews();
             services.AddScoped<IProductRepo, SqlProductRepo>();
             services.AddScoped<ICategoryRepo, SqlCategoryRepo>();
+            services.AddScoped<IAccountRepo, SqlAccountRepo>();
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
+
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+               .AddCookie(options =>
+               {
+                   options.LoginPath = new Microsoft.AspNetCore.Http.PathString("/users/login");
+                   options.AccessDeniedPath = new Microsoft.AspNetCore.Http.PathString("/users/Login");
+               });
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {
@@ -59,6 +68,9 @@ namespace BSB_test_task
             }
 
             app.UseRouting();
+            
+            app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

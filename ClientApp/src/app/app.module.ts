@@ -5,23 +5,20 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { AppComponent } from './app.component';
-import { NavMenuComponent } from './nav-menu/nav-menu.component';
-import { HomeComponent } from './home/home.component';
-import { CounterComponent } from './counter/counter.component';
-import { FetchDataComponent } from './fetch-data/fetch-data.component';
+import { NavMenuComponent } from './nav-menu/nav-menu.component';import { CounterComponent } from './counter/counter.component';
 import { CatalogComponent } from './catalog/catalog.component';
 import { AppRoutingModule } from './app-routing.module';
 import { CategoriesComponent } from './categories/categories.component';
+import { AccountComponent } from './account/account.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     NavMenuComponent,
-    HomeComponent,
     CounterComponent,
-    FetchDataComponent,
     CatalogComponent,
-    CategoriesComponent
+    CategoriesComponent,
+    AccountComponent
   ],
   imports: [    
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
