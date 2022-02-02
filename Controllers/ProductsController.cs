@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Catalog.Data;
 using Catalog.Models;
-
+using AutoMapper;
 
 namespace BSB_test_task.Controllers
 {
@@ -16,32 +16,44 @@ namespace BSB_test_task.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly IProductRepo _productRepo;
+        private readonly ICategoryRepo _categoryRepo;
+        private readonly IMapper _mapper;
 
-        public ProductsController( IProductRepo productRepo)
+        public ProductsController(IProductRepo productRepo, ICategoryRepo categoryRepo, IMapper mapper)
         {
             _productRepo = productRepo;
+            _categoryRepo = categoryRepo;
+            _mapper = mapper;
         }
 
         // GET: api/Products
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Product>>> GetProducts()
+        public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts([FromQuery] string name)
         {
-            var product = await _productRepo.GetProducts();
-            return Ok(product);
+            IEnumerable<Product> products;
+            if (name == null)
+            {
+                products = await _productRepo.GetAllAsync();
+            }
+            else
+            {
+                products = await _productRepo.GetAllAsync(name);
+            }
+            return Ok(_mapper.Map<IEnumerable<ProductDTO>>(products));
         }
 
         // GET: api/Products/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Product>> GetProduct(int id)
+        public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
-            var product = await _productRepo.GetProduct(id);
+            var product = await _productRepo.GetByIdAsync(id);
 
             if (product == null)
             {
                 return NotFound();
             }
 
-            return Ok(product);
+            return Ok(_mapper.Map<ProductDTO>(product));
         }
 
         //// PUT: api/Products/5
@@ -75,16 +87,29 @@ namespace BSB_test_task.Controllers
         //    return NoContent();
         //}
 
-        //// POST: api/Products
-        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        //[HttpPost]
-        //public async Task<ActionResult<Product>> PostProduct(Product product)
-        //{
-        //    _context.Products.Add(product);
-        //    await _context.SaveChangesAsync();
+        //POST: api/Products
+        //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<ProductDTO>> PostProduct(ProductDTO productDto)
+        {
+            Product newProduct = _mapper.Map<Product>(productDto);
 
-        //    return CreatedAtAction("GetProduct", new { id = product.Id }, product);
-        //}
+            var category = await _categoryRepo.GetByNameAsync(productDto.CategoryName);
+            if (category == null)
+            {
+                category = new Category() {
+                    Name = productDto.CategoryName
+                };
+                await _categoryRepo.AddAsync(category);
+            }
+
+            newProduct.CategoryId = category.Id;
+            await _productRepo.AddAsync(newProduct);
+            await _productRepo.SaveChangesAsync();
+
+            ProductDTO productDTO = _mapper.Map<ProductDTO>(newProduct);
+            return CreatedAtAction("GetProduct", new { id = productDTO.Id }, productDTO);
+        }
 
         //// DELETE: api/Products/5
         //[HttpDelete("{id}")]

@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Catalog.Data;
 using Microsoft.EntityFrameworkCore;
+using System;
+using AutoMapper;
+using Catalog.Models;
 
 namespace BSB_test_task
 {
@@ -25,6 +28,8 @@ namespace BSB_test_task
             services.AddDbContext<CatalogContext>(opt => opt.UseSqlServer(Configuration["ConnectionStrings:DefaultConnection"]));
             services.AddControllersWithViews();
             services.AddScoped<IProductRepo, SqlProductRepo>();
+            services.AddScoped<ICategoryRepo, SqlCategoryRepo>();
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
             {

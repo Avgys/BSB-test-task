@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { CatalogComponent } from './catalog/catalog.component';
+import { CategoriesComponent } from './categories/categories.component';
+import { CounterComponent } from './counter/counter.component';
 
 // import { DashboardComponent } from './dashboard/dashboard.component';
 // import { HeroesComponent } from './heroes/heroes.component';
@@ -10,7 +12,8 @@ const routes: Routes = [
   { path: '', redirectTo: '/catalog', pathMatch: 'full' },
   { path: 'catalog', component: CatalogComponent },
   // { path: 'detail/:id', component: HeroDetailComponent },
-  // { path: 'heroes', component: HeroesComponent }
+  { path: 'categories', component: CategoriesComponent },
+  { path: 'counter', component: CounterComponent }
 ];
 
 @NgModule({

@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace Catalog.Data
 {
-	public interface IProductRepo
+	public interface IProductRepo : IRepo<Product>
     {
-        Task<IEnumerable<Product>> GetProducts();
-
-        Task<Product> GetProduct(int id);
+        Task<IEnumerable<Product>> GetAllAsync(string term);
     }
 }

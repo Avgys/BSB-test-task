@@ -1,0 +1,49 @@
+  <h1>List of categories</h1>
+<input type="button" value="Добавить" class="btn btn-default" (click)="addCategory()" />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let category of categories">
+            <ng-template [ngTemplateOutlet]="loadTemplate(category)" 
+                        [ngTemplateOutletContext]="{ $implicit: category}">
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
+<div>{{statusMessage}}</div>
+    
+    
+<!--шаблон для чтения-->
+<ng-template #readOnlyTemplate let-category>
+    <td>{{category.id}}</td>
+    <td>{{category.name}}</td>
+    <td>
+        <input type="button" value="Изменить" class="btn btn-default" (click)="editCategory(category)" />
+    </td>
+    <td>
+        <input type="button" value="Удалить" (click)="deleteCategory(category)" class="btn btn-danger" />
+    </td>
+</ng-template>
+   
+<!--шаблон для редактирования-->
+<ng-template #editTemplate>
+    <td>
+        <input type="number" [(ngModel)]="editedCategory.id" readonly disabled class="form-control" />
+    </td>
+    <td>
+        <input type="text" [(ngModel)]="editedCategory.name" class="form-control" />
+    </td>
+    <td>
+        <input type="button" value="Сохранить" (click)="saveCategory()" class="btn btn-success" />
+    </td>
+    <td>
+        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
+    </td>
+</ng-template>

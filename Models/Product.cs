@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Catalog.Models
 {
@@ -8,7 +9,23 @@ namespace Catalog.Models
         public string Name { get; set; }
         [Required]
         public int CategoryId { get; set; }     
-        public Category category { get; set; }
+        public Category Category { get; set; }
+        [NotMapped]
+        public string CategoryName
+        {
+            get
+            {
+                if (Category != null)
+                {
+                    return Category.Name;
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+        [Required]
         public string Description { get; set; }
         [Required]
         public int Price { get; set; }

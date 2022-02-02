@@ -1,23 +1,83 @@
-<h2>My Heroes</h2>
 
-<!-- <div>
-  <label for="new-hero">Hero name: </label>
-  <input id="new-hero" #heroName />
+<h1>List of products</h1>
 
-   (click) passes input value to add() and then clears the input
-  <button class="add-button" (click)="add(heroName.value); heroName.value=''">
-    Add hero
-  </button>
-</div>  -->
-
-<ul class="heroes">
-  <li *ngFor="let product of products">
-      
-    <span class="badge">{{product.Name}}</span> {{product.Category}}
-    <!-- <a routerLink="/detail/{{hero.id}}">
-      <span class="badge">{{hero.id}}</span> {{hero.name}}
-    </a> -->
-    <!-- <button class="delete" title="delete hero"
-      (click)="delete(hero)">x</button> -->
-  </li>
-</ul>
+<input #searchBox id="search-box" (input)="search(searchBox.value)" />
+<div>
+  <span *ngFor="let category of categories">
+    <input type="checkbox" value="{{category.name}}" data-toggle="toggle" (change)="onChange(category)"> {{category.name}}
+  </span>
+</div>
+<br>
+<input type="button" value="Добавить" class="btn btn-default" (click)="addProduct()" />
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <td>Id</td>
+            <td>Name</td>
+            <td>Category name</td>
+            <td>price</td>
+            <td>description</td>
+            <td>specification</td>
+            <td>specialSpecification</td>
+            <td></td>
+            <td></td>
+        </tr>
+    </thead>
+    <tbody>
+        <tr *ngFor="let product of filteredProducts">
+            <ng-template [ngTemplateOutlet]="loadTemplate(product)" 
+                        [ngTemplateOutletContext]="{ $implicit: product}">
+            </ng-template>
+        </tr>
+    </tbody>
+</table>
+<div>{{statusMessage}}</div>
+    
+    
+<!--шаблон для чтения-->
+<ng-template #readOnlyTemplate let-product>
+    <td>{{product.id}}</td>
+    <td>{{product.name}}</td>
+    <td>{{product.categoryName}}</td>
+    <td>{{product.price}}</td>
+    <td>{{product.description}}</td>
+    <td>{{product.specification}}</td>
+    <td>{{product.specialSpec}}</td>
+    <td>
+        <input type="button" value="Изменить" class="btn btn-default" (click)="editProduct(product)" />
+    </td>
+    <td>
+        <input type="button" value="Удалить" (click)="deleteProduct(product)" class="btn btn-danger" />
+    </td>
+</ng-template>
+   
+<!--шаблон для редактирования-->
+<ng-template #editTemplate>
+    <td>
+        <input type="number" [(ngModel)]="editedProduct.id" readonly disabled class="form-control" />
+    </td>
+    <td>
+        <input type="text" [(ngModel)]="editedProduct.name" class="form-control" />
+    </td>
+    <td>
+      <input type="text" [(ngModel)]="editedProduct.categoryName" class="form-control" />
+    </td>
+    <td>
+        <input type="number" [(ngModel)]="editedProduct.price" class="form-control" />
+    </td>
+    <td>
+      <input type="text" [(ngModel)]="editedProduct.description" class="form-control" />
+    </td>
+    <td>
+        <input type="text" [(ngModel)]="editedProduct.specification" class="form-control" />
+    </td>
+    <td>
+      <input type="text" [(ngModel)]="editedProduct.specialSpec" class="form-control" />
+    </td>
+    <td>
+        <input type="button" value="Сохранить" (click)="saveProduct()" class="btn btn-success" />
+    </td>
+    <td>
+        <input type="button" value="Отмена" (click)="cancel()" class="btn btn-warning" />
+    </td>
+</ng-template>
