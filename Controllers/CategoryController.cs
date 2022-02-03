@@ -9,9 +9,11 @@ using Catalog.Data;
 using Catalog.Models;
 using AutoMapper;
 using Catalog.DTO;
+using Microsoft.AspNetCore.Authorization;
 
 namespace BSB_test_task.Controllers
 {
+    [Authorize(Roles = "admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -25,7 +27,7 @@ namespace BSB_test_task.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/CategoryDTOes
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CategoryDTO>>> GetCategory()
         {
@@ -33,7 +35,7 @@ namespace BSB_test_task.Controllers
             return Ok(_mapper.Map<IEnumerable<CategoryDTO>>(categories));
         }
 
-        // GET: api/Category/5
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public async Task<ActionResult<CategoryDTO>> GetCategory(int id)
         {
@@ -47,8 +49,6 @@ namespace BSB_test_task.Controllers
             return Ok(_mapper.Map<CategoryDTO>(category));
         }
 
-        // PUT: api/Category/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutCategory(int id, CategoryDTO categoryDTO)
         {
@@ -69,8 +69,6 @@ namespace BSB_test_task.Controllers
             }
         }
 
-        // POST: api/Category
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<CategoryDTO>> PostCategory(CategoryDTO categoryDTO)
         {
@@ -89,7 +87,6 @@ namespace BSB_test_task.Controllers
 
         }
 
-        // DELETE: api/Category/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCategory(int id)
         {

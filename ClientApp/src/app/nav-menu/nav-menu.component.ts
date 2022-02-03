@@ -34,6 +34,5 @@ export class NavMenuComponent {
 
   logout(){
     this.http.logout();
-    // window.location.reload();
   }
 }

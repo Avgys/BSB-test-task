@@ -29,7 +29,6 @@ namespace BSB_test_task.Controllers
             _mapper = mapper;
         }
 
-        // GET: api/Products
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ProductDTO>>> GetProducts([FromQuery] string name)
         {
@@ -53,7 +52,6 @@ namespace BSB_test_task.Controllers
             }
         }
 
-        // GET: api/Products/5
         [HttpGet("{id}")]
         public async Task<ActionResult<ProductDTO>> GetProduct(int id)
         {
@@ -66,9 +64,6 @@ namespace BSB_test_task.Controllers
 
             return Ok(_mapper.Map<ProductDTO>(product));
         }
-
-        // PUT: api/Products/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
 
         [Authorize]
         [HttpPut("{id}")]
@@ -91,8 +86,6 @@ namespace BSB_test_task.Controllers
             }
         }
 
-        //POST: api/Products
-        //To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [Authorize]
         [HttpPost]
         public async Task<ActionResult<ProductDTO>> PostProduct(ProductDTO productDto)
@@ -116,9 +109,7 @@ namespace BSB_test_task.Controllers
             ProductDTO productDTO = _mapper.Map<ProductDTO>(newProduct);
             return CreatedAtAction("GetProduct", new { id = productDTO.Id }, productDTO);
         }
-
-        // DELETE: api/Products/5
-
+                
         [Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteProduct(int id)

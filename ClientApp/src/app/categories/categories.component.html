@@ -24,7 +24,6 @@
     <td>{{category.name}}</td>    
 </ng-template>
 
-<!--шаблон для чтения-->
 <ng-template #readOnlyTemplate let-category>
     <td>{{category.id}}</td>
     <td>{{category.name}}</td>
@@ -36,7 +35,6 @@
     </td>
 </ng-template>
    
-<!--шаблон для редактирования-->
 <ng-template #editTemplate>
     <td>
         <input type="number" [(ngModel)]="editedCategory.id" readonly disabled class="form-control" />

@@ -10,6 +10,7 @@ namespace Catalog.Models
         [Required]
         public int CategoryId { get; set; }     
         public Category Category { get; set; }
+        private string categoryName = "";
         [NotMapped]
         public string CategoryName
         {
@@ -21,8 +22,12 @@ namespace Catalog.Models
                 }
                 else
                 {
-                    return "";
+                    return categoryName;
                 }
+            }
+            set
+            {
+                categoryName = value;
             }
         }
         [Required]

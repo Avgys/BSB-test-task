@@ -21,5 +21,4 @@ namespace Catalog.Profiles
             CreateMap<AccountAuthDTO, Account>();
         }
     }
-
 }

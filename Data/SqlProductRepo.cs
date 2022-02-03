@@ -60,6 +60,14 @@ namespace Catalog.Data
 
         public async Task<Product> UpdateAsync(Product product)
         {
+            if (product.CategoryId == 0)
+            {
+                if (!string.IsNullOrEmpty(product.CategoryName))
+                {
+                    product.Category = _catalogContext.Categories.FirstOrDefault(cat => cat.Name == product.CategoryName);
+                    product.CategoryId = product.Category.Id;
+                }
+            }
             _catalogContext.Entry(product).State = EntityState.Modified;
 
             try

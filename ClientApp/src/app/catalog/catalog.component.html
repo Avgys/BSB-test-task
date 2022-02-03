@@ -15,7 +15,7 @@
             <td>Id</td>
             <td>Name</td>
             <td>Category name</td>
-            <td>price</td>
+            <td style="width: 100px;">price</td>
             <td>description</td>
             <td>specification</td>
             <td *ngIf="this.isLogged()">specialSpecification</td>
@@ -47,7 +47,7 @@
     <td>{{product.id}}</td>
     <td>{{product.name}}</td>
     <td>{{product.categoryName}}</td>
-    <td>{{product.price}}</td>
+    <td >{{product.price}}</td>
     <td>{{product.description}}</td>
     <td>{{product.specification}}</td>
     <td>{{product.specialSpec}}</td>
@@ -68,7 +68,10 @@
         <input type="text" [(ngModel)]="editedProduct.name" class="form-control" />
     </td>
     <td>
-      <input type="text" [(ngModel)]="editedProduct.categoryName" class="form-control" />
+      <!-- <input type="text" [(ngModel)]="editedProduct.categoryName" class="form-control" /> -->
+        <select name="language" [(ngModel)]="editedProduct.categoryName">
+            <option *ngFor="let category of categories" value="{{category.name}}">{{category.name}}</option>
+        </select>
     </td>
     <td>
         <input type="number" [(ngModel)]="editedProduct.price" class="form-control" />

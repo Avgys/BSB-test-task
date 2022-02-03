@@ -76,7 +76,7 @@ export class CategoriesComponent implements OnInit {
       } 
     }  
   }
-  // сохраняем пользователя
+  
   saveCategory() {
       if (this.isNewRecord) {
           this.categoryService.createCategory(this.editedCategory).subscribe(data => {
@@ -93,16 +93,15 @@ export class CategoriesComponent implements OnInit {
           this.editedCategory = null;
       }
   }
-  // отмена редактирования
+  
   cancel() {
-      // если отмена при добавлении, удаляем последнюю запись
       if (this.isNewRecord) {
           this.categories.pop();
           this.isNewRecord = false;
       }
       this.editedCategory = null;
   }
-  // удаление пользователя
+  
   deleteCategory(category: Category) {
       this.categoryService.deleteCategory(category.id).subscribe(data => {
           this.statusMessage = 'Category deleted',
